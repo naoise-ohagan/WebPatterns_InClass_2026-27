@@ -2,7 +2,7 @@ package week02.entities;
 
 import java.util.Objects;
 
-public class products {
+public class Product {
     private String productCode;
     private String productName;
     private String productLine;
@@ -13,7 +13,7 @@ public class products {
     private double buyPrice;
     private double MSRP;
 
-    public products(String productCode, String productName, String productLine, String productScale, String productVendor, String productDescription, int quantityInStock, double buyPrice, double MSRP) {
+    public Product(String productCode, String productName, String productLine, String productScale, String productVendor, String productDescription, int quantityInStock, double buyPrice, double MSRP) {
         this.productCode = productCode;
         this.productName = productName;
         this.productLine = productLine;
@@ -28,7 +28,7 @@ public class products {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        products products = (products) o;
+        Product products = (Product) o;
         return Objects.equals(productCode, products.productCode);
     }
 

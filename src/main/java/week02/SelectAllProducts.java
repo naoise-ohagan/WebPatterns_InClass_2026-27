@@ -1,6 +1,6 @@
 package week02;
 
-import week02.entities.products;
+import week02.entities.Product;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -13,15 +13,17 @@ public class SelectAllProducts {
         String password = "";
 
         try{
-            // Step 1:
+            // Step 1: Add Driver file
             Class.forName(driver);
 
-            // Step 2:
+            // Step 2: Create connection to database
             try(Connection conn = DriverManager.getConnection(dbqUrl, username, password)){
+                // Step 3. Write SQL to be used
                 String sql = "SELECT * FROM products";
+                //Step 4. Prepare SQL for execution - compile it into something that can be run
                 try(PreparedStatement ps = conn.prepareStatement(sql)){
 
-                    ArrayList<products> p = new ArrayList<>();
+                    ArrayList<Product> p = new ArrayList<>();
 
                     ResultSet rs = ps.executeQuery();
 
@@ -36,7 +38,7 @@ public class SelectAllProducts {
                         double buyPrice = rs.getDouble("buyPrice");
                         double MSRP = rs.getDouble("MSRP");
 
-                        products currentproduct = new products(productCode, productName, productLine, productScale, productVendor, productDescription, quantityInStock, buyPrice, MSRP);
+                        Product currentproduct = new Product(productCode, productName, productLine, productScale, productVendor, productDescription, quantityInStock, buyPrice, MSRP);
 
                         p.add(currentproduct);
                     }
