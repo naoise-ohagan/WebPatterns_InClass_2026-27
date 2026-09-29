@@ -16,7 +16,7 @@ public class SelectAllOrderDetails {
             // STep 1:
             Class.forName(driver);
 
-            // STep 2:
+            // Step 2:
             try(Connection conn = DriverManager.getConnection(dbUrl, username, password)){
                 String sql = "SELECT * FROM orderdetails";
                 try(PreparedStatement ps = conn.prepareStatement(sql)){
