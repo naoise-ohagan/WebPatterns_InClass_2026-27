@@ -1,5 +1,6 @@
 package week03_daos.persistence;
 
+import org.jspecify.annotations.NonNull;
 import week03_daos.entities.Customer;
 
 import java.sql.*;
@@ -7,60 +8,53 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerDaoImpl implements CustomerDao {
-    private String driver = "com.mysql.cj.jdbc.Driver";
-    private String url = "jdbc:mysql://127.0.0.1:3306/classicmodels";
-    private String username = "root";
-    private String password = "";
-
-    Connector connector = new Connector();
-    Connection conn = connector.getConnecton();
 
     public List<Customer> selectCustomersByName(String name) {
         List<Customer> CustomerList = new ArrayList<>();
 
+        Connector connector = new Connector();
+        Connection conn = connector.getConnecton();
 
-                // Prepare statement - Write an SQL statement and compile it into something
-                // the database can actually run
-                String sql = "SELECT * FROM customers WHERE customerName = ?";
-                try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                    // Populate placeholder
-                    ps.setString(1, name);
+        // Prepare statement - Write an SQL statement and compile it into something
+        // the database can actually run
+        String sql = "SELECT * FROM customers WHERE customerName = ?";
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            // Populate placeholder
+            ps.setString(1, name);
 
-                    ResultSet rs = ps.executeQuery();
+            ResultSet rs = ps.executeQuery();
 
-                    while (rs.next()) {
-                        int customerNumber = rs.getInt("customerNumber");
-                        String customerName = rs.getString("customerName");
-                        String contactLastName = rs.getString("contactLastName");
-                        String contactFirstName = rs.getString("contactFirstName");
-                        String phone = rs.getString("phone");
-                        String addressLine1 = rs.getString("addressLine1");
-                        String addressLine2 = rs.getString("addressLine2");
-                        String city = rs.getString("city");
-                        String state = rs.getString("state");
-                        String postalCode = rs.getString("postalCode");
-                        String country = rs.getString("country");
-                        Integer salesRepEmployeeNumber = rs.getInt("salesRepEmployeeNumber");
-                        Double creditLimit = rs.getDouble("creditLimit");
+            while (rs.next()) {
+                Customer c = mapRow(rs);
 
-                        Customer c = new Customer(customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2, city, state, postalCode, country, salesRepEmployeeNumber, creditLimit);
-
-                        CustomerList.add(c);
-                    }
-
-                } catch (SQLException e) {
-                    System.out.println("Exception: \"" + e.getMessage() + "\"");
-                    System.out.println("\tCannot prepare statement: " + sql);
-                }
-            } catch (SQLException e) {
-                System.out.println("Exception: \"" + e.getMessage() + "\"");
-                System.out.println("\tCannot establish a connection to " + url);
+                CustomerList.add(c);
             }
-        } catch (ClassNotFoundException e) {
+
+        } catch (SQLException e) {
             System.out.println("Exception: \"" + e.getMessage() + "\"");
-            System.out.println("\tNo driver files found - please check dependencies.");
+            System.out.println("\tCannot prepare statement: " + sql);
         }
-        return CustomerList;
+
+    }
+
+    private static @NonNull Customer mapRow(ResultSet rs) throws SQLException {
+        int customerNumber = rs.getInt("customerNumber");
+        String customerName = rs.getString("customerName");
+        String contactLastName = rs.getString("contactLastName");
+        String contactFirstName = rs.getString("contactFirstName");
+        String phone = rs.getString("phone");
+        String addressLine1 = rs.getString("addressLine1");
+        String addressLine2 = rs.getString("addressLine2");
+        String city = rs.getString("city");
+        String state = rs.getString("state");
+        String postalCode = rs.getString("postalCode");
+        String country = rs.getString("country");
+        Integer salesRepEmployeeNumber = rs.getInt("salesRepEmployeeNumber");
+        Double creditLimit = rs.getDouble("creditLimit");
+
+        Customer c = new Customer(customerNumber, customerName, contactLastName, contactFirstName, phone, addressLine1, addressLine2, city, state, postalCode, country, salesRepEmployeeNumber, creditLimit);
+        return c;
+
     }
 
     public List<Customer> selectCustomersContainingName(String name) {
