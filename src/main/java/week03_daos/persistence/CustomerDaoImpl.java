@@ -12,14 +12,13 @@ public class CustomerDaoImpl implements CustomerDao {
     private String username = "root";
     private String password = "";
 
+    Connector connector = new Connector();
+    Connection conn = connector.getConnecton();
+
     public List<Customer> selectCustomersByName(String name) {
         List<Customer> CustomerList = new ArrayList<>();
-        try {
-            // Load driver - pull in library of Java code to work with MySQL database
-            Class.forName(driver);
 
-            // Connect to database - make a connection to the specified URL with the supplied credentials
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
+
                 // Prepare statement - Write an SQL statement and compile it into something
                 // the database can actually run
                 String sql = "SELECT * FROM customers WHERE customerName = ?";
@@ -214,3 +213,4 @@ public class CustomerDaoImpl implements CustomerDao {
         return false;
     }
 }
+
