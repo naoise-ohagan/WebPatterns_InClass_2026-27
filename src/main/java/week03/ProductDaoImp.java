@@ -1,4 +1,4 @@
-package week03_daos.persistence;
+package week03;
 
 import week03_daos.entities.Product;
 
@@ -6,7 +6,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDaoImpl {
+
+public class ProductDaoImp implements ProductDao {
 
     public static List<Product> getProductsByProductLine(String prodLine) {
         // Create variable to hold list of matching Products
@@ -24,15 +25,15 @@ public class ProductDaoImpl {
             Class.forName(driver);
 
             // Connect to database - make a connection to the specified URL with the supplied credentials
-            try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            try(Connection conn = DriverManager.getConnection(url, username, password)){
                 // Prepare statement - Write an SQL statement and compile it into something
                 // the database can actually run
                 String sql = "SELECT * FROM products WHERE productLine = ?";
-                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                try(PreparedStatement ps = conn.prepareStatement(sql)){
                     // Populate placeholder
                     ps.setString(1, prodLine);
                     // Run query - Execute the SQL that has been compiled and get the results
-                    try (ResultSet rs = ps.executeQuery()) {
+                    try(ResultSet rs = ps.executeQuery()) {
                         // Process results - loop through each row in resultset until it's empty
                         while (rs.next()) {
                             // Extract pieces from the result row - we can explicitly ask for each piece by column name
@@ -51,15 +52,15 @@ public class ProductDaoImpl {
                                     quantityInStock, buyPrice, msrp);
                             products.add(p);
                         }
-                    } catch (SQLException e) {
+                    }catch(SQLException e){
                         System.out.println("Exception: \"" + e.getMessage() + "\"");
                         System.out.println("\tIssue occurred when processing query or results");
                     }
-                } catch (SQLException e) {
+                }catch(SQLException e){
                     System.out.println("Exception: \"" + e.getMessage() + "\"");
                     System.out.println("\tCannot prepare statement: " + sql);
                 }
-            } catch (SQLException e) {
+            }catch(SQLException e){
                 System.out.println("Exception: \"" + e.getMessage() + "\"");
                 System.out.println("\tCannot establish a connection to " + url);
             }
@@ -70,4 +71,59 @@ public class ProductDaoImpl {
 
         return products;
     }
+
+    public static boolean addProduct(String productCode, String productName, String productLine, String productScale,
+                                     String productVendor, String productDescription,
+                                     int quantityInStock, double buyPrice, double msrp) {
+
+        // Declare database constants
+        String driver = "com.mysql.cj.jdbc.Driver";
+        String dbUrl = "jdbc:mysql://127.0.0.1:3306/classicmodels";
+        String username = "root";
+        String password = "";
+
+        try {
+            // 1) Add driver files
+            Class.forName(driver);
+
+            // 2) Create connection to database
+            try(Connection conn = DriverManager.getConnection(dbUrl, username, password)){
+                // 3) Write SQL to be used
+                String sql = "INSERT INTO customers VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+                try(PreparedStatement ps = conn.prepareStatement(sql)){
+                    // Populate placeholders
+                    ps.setString(1, productCode);
+                    ps.setString(2, productName);
+                    ps.setString(3, productLine);
+                    ps.setString(4, productScale);
+                    ps.setString(5, productVendor);
+                    ps.setString(6, productDescription);
+                    ps.setInt(7, quantityInStock);
+                    ps.setDouble(8, buyPrice);
+                    ps.setDouble(9, msrp);
+
+                    // 5) Execute insert (a form of update) and see how many rows are impacted
+                    int rowsAffected = ps.executeUpdate();
+                    if (rowsAffected > 0) {
+                        return true;
+                    };
+
+                }catch(SQLException e){
+                    System.out.println("Could not prepare SQL: \"" + sql + "\"");
+                    System.out.println("Exception reads: " + e.getMessage());
+                }
+            }catch(SQLException e){
+                System.out.println("Could not establish a connection to " + dbUrl +
+                        " using " +  username + "as username");
+                System.out.println("Exception reads: " + e.getMessage());
+            }
+
+        } catch (ClassNotFoundException e) {
+            System.out.println("Exception: " + e.getMessage());
+            System.out.println("No driver files found - please check dependencies..");
+        }
+        return false;
+    }
 }
+
