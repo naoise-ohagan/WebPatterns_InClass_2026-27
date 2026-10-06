@@ -1,7 +1,7 @@
 package week03_daos.apps;
 
-import solutions.intro_to_jdbc.apps.ProductDataAccess;
 import week03_daos.entities.Product;
+import week03_daos.persistence.ProductDaoImpl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -12,7 +12,7 @@ public class SampleSelectProductsByProductLine {
         System.out.println("Enter product line: ");
         String productLine = input.nextLine();
 
-        List<Product> products = ProductDataAccess.getProductsByProductLine(productLine);
+        List<Product> products = ProductDaoImpl.getProductsByProductLine(productLine);
 
         if(!products.isEmpty()){
             System.out.println("Product list for "+ productLine + ":");
