@@ -24,7 +24,7 @@ public class Connector {
                 System.out.println("\tCannot establish a connection to " + url);
             }
         } catch (ClassNotFoundException e) {
-            System.out.println("Exception: " + e.getMessage() + "");
+            System.out.println("Exception: " + e.getMessage());
             System.out.println("\tNo driver files found - please check dependencies.");
         }
         return null;
